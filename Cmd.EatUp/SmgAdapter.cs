@@ -51,11 +51,12 @@ namespace Cmd.EatUpTests
                 {
                     DepartmentId = profile.DeptId,
                     FirstName = profile.FirstName,
-                    Id = profile.ProfileId,
+                    ProfileId = profile.ProfileId,
                     ImagePath = profile.Image,
                     LastName = profile.LastName,
                     Room = profile.Room,
-                    Position = profile.POsition
+                    Position = profile.POsition,
+                    StringId = (profile.FirstNameEng + "." + profile.LastNameEng).ToString().ToLower()
                 };
                 employees.Add(employee);
             }

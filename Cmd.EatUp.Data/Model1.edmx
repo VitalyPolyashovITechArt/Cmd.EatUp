@@ -27,6 +27,8 @@
           <Property Name="PlaceId" Type="int" />
           <Property Name="ProjectId" Type="int" />
           <Property Name="Position" Type="varchar(max)" />
+          <Property Name="ProfileId" Type="int" />
+          <Property Name="StringId" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Invites">
           <Key>
@@ -215,6 +217,8 @@
           <NavigationProperty Name="Achievements" Relationship="eatupModel.FK_Achievements_Employees" FromRole="Employee" ToRole="Achievement" />
           <NavigationProperty Name="Meetings" Relationship="eatupModel.Invites" FromRole="Employee" ToRole="Meeting" />
           <NavigationProperty Name="Invites" Relationship="eatupModel.Meetings_Employees" FromRole="Employee" ToRole="Meeting" />
+          <Property Name="ProfileId" Type="Int32" />
+          <Property Name="StringId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Meeting">
           <Key>
@@ -285,6 +289,8 @@
           <EntitySetMapping Name="Employees">
             <EntityTypeMapping TypeName="eatupModel.Employee">
               <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="StringId" ColumnName="StringId" />
+                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="Position" ColumnName="Position" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="PlaceId" ColumnName="PlaceId" />

@@ -6,12 +6,11 @@ using Cmd.EatUp.Data;
 
 namespace Cmd.EatUp.Models
 {
-    public class ProfileInfoViewModel
+    public class MeetingViewModel
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public DateTime Date { get; set; }
 
-        public string ImagePath { get; set; }
+        public string PlaceName { get; set; }
 
         public DateTime StartPreferredTime { get; set; }
         public DateTime FinishPreferredTime { get; set; }

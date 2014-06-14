@@ -31,30 +31,30 @@ namespace Cmd.EatUp.Controllers
         // GET api/<controller>
        //[Route("")]
         //[HttpGet]
+
+    [Route("Fill")]
+    [HttpGet]
         public void Fill()
         {
             var adapter = new SmgAdapter();
             var sessionId = adapter.Authenticate("vitaly.polyashov", "qwerty6");
             var employees = adapter.GetAllEmployees(sessionId);
             DatabaseRepository repository = new DatabaseRepository();
-            repository.SaveEmployees(employees);
+            //repository.SaveEmployees(employees);
         }
 
         [Route("Authenticate")]
         [HttpGet]
-        public string Authenticate(string userName, string password)
+        public int Authenticate(string userName, string password)
         {
             string sessionId = String.Empty;
             var smgAdapter = new SmgAdapter();
-            try
-            {
+
                 sessionId = smgAdapter.Authenticate(userName, password);
-                return sessionId;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+
+                DatabaseRepository repository = new DatabaseRepository();
+            return repository.GetIdByName(userName);
+
         }
 
         [Route("GetProfileInfo")]
@@ -67,7 +67,10 @@ namespace Cmd.EatUp.Controllers
             viewModel.FirstName = result.FirstName;
             viewModel.LastName = result.LastName;
             viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
-            viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(-30);
+            viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
+            viewModel.ImagePath = result.ImagePath;
+
+            //repository.GetInvitations()
 
             return viewModel;
         }

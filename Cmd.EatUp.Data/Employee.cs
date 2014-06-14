@@ -31,6 +31,8 @@ namespace Cmd.EatUp.Data
         public Nullable<int> PlaceId { get; set; }
         public Nullable<int> ProjectId { get; set; }
         public string Position { get; set; }
+        public Nullable<int> ProfileId { get; set; }
+        public string StringId { get; set; }
     
         public virtual ICollection<Achievement> Achievements { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }

@@ -17,9 +17,14 @@ namespace Cmd.EatUp.Data
             context.SaveChanges();
         }
 
+        public int GetIdByName(string userName)
+        {
+           return context.Employees.Single(x => x.StringId == userName.ToLower()).ProfileId.Value;
+        }
+
         public Employee GetProfile(int id)
         {
-            return context.Employees.Single(x => x.Id == id);
+            return context.Employees.Single(x => x.ProfileId == id);
         }
 
         public List<Meeting> GetMeetings(int id)
