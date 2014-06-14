@@ -146,6 +146,14 @@ namespace Cmd.EatUp.Controllers
             var repository = new DatabaseRepository();
             repository.InviteToMeeting(id, targetId);
         }
+
+        [Route("InviteRandomEmployees")]
+        [HttpGet]
+        public void Invite(int id)
+        {
+            var repository = new DatabaseRepository();
+            repository.InviteRandomEmployees(id);
+        }
     }
 }
 
