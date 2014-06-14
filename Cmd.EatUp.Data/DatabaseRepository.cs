@@ -61,11 +61,11 @@ namespace Cmd.EatUp.Data
 
         private Dictionary<int, int> GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees)
         {
-            Dictionary<int, int> weightDic = employees.ToDictionary(x => x.Id, y => 0);
-            employees.Where(x => x.Room == employee.Room).ToList().ForEach(y => weightDic[y.Id]+=5);
-            employees.Where(x => x.ProjectId == employee.ProjectId).ToList().ForEach(y => weightDic[y.Id] += 4);
-            employees.Where(x => x.DepartmentId == employee.DepartmentId).ToList().ForEach(y => weightDic[y.Id] += 2);
-            employees.Where(x => x.Position == employee.Position).ToList().ForEach(y => weightDic[y.Id] += 1);
+            Dictionary<int, int> weightDic = employees.ToDictionary(x => x.ProfileId.Value, y => 0);
+            employees.Where(x => x.Room == employee.Room).ToList().ForEach(y => weightDic[y.ProfileId.Value]+=5);
+            employees.Where(x => x.ProjectId == employee.ProjectId).ToList().ForEach(y => weightDic[y.ProfileId.Value] += 4);
+            employees.Where(x => x.DepartmentId == employee.DepartmentId).ToList().ForEach(y => weightDic[y.ProfileId.Value] += 2);
+            employees.Where(x => x.Position == employee.Position).ToList().ForEach(y => weightDic[y.ProfileId.Value] += 1);
 
             return weightDic;
         }
