@@ -188,5 +188,22 @@ namespace Cmd.EatUp.Data
         {
             return context.Places.ToList();
         }
+
+        public void ChangePlaceAndTime(int id, DateTime? time, string placeName)
+        {
+            var profile = GetProfile(id);
+
+            if (!string.IsNullOrEmpty(placeName))
+            {
+                profile.PlaceId = context.Places.First(place => place.Name == placeName).Id;
+            }
+
+            if (time.HasValue)
+            {
+                profile.Time = time;
+            }
+
+            context.SaveChanges();
+        }
     }
 }
