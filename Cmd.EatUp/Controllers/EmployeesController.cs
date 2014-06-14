@@ -1,4 +1,5 @@
 ﻿
+using System.Linq;
 using System.Web.Http;
 using Cmd.EatUp.Data;
 using Cmd.EatUp.Models;
@@ -75,7 +76,20 @@ namespace Cmd.EatUp.Controllers
             return viewModel;
         }
 
-        
+        [Route("GetPreferrablePeople")]
+        [HttpGet]
+        public PreferrablePeopleViewModel GetPreferrablePeople(int id)
+        {
+            var viewModel = new PreferrablePeopleViewModel();
+            var repository = new DatabaseRepository();
+            viewModel.PreferrablePeople = repository.GetPreferrablePeople(id).Select(employee => new PreferrablePersonViewModel()
+            {
+                FullName = String.Format("{0} {1}", employee.FirstName, employee.LastName),
+                ImageUrl = employee.ImagePath
+            });
+
+            return viewModel;
+        }
     }
 }
 
