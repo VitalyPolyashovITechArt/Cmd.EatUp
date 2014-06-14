@@ -110,10 +110,25 @@ namespace Cmd.EatUp.Controllers
         [HttpGet]
         public List<EmployeeViewModel> GetPreferrablePeople(int id)
         {
-            var viewModel = new List<EmployeeViewModel>();
             var repository = new DatabaseRepository();
-            return repository.GetPreferrablePeople(id).Select(employee => ConvertToEmployeeViewMOdel(employee)).ToList();
+            return repository.GetPreferrablePeople(id).Select(ConvertToEmployeeViewMOdel).ToList();
+        }
 
+        private MeetingViewModel ConvertToMeetingViewModel(Meeting model)
+        {
+            return new MeetingViewModel()
+            {
+                Date = model.Time,
+                PlaceName = model.Place.Name
+            };
+        }
+
+        [Route("GetMeetings")]
+        [HttpGet]
+        public List<MeetingViewModel> GetMeetings(int id)
+        {
+            var repository = new DatabaseRepository();
+            return repository.GetMeetings(id).Select(ConvertToMeetingViewModel).ToList();
         }
 
         [Route("JoinMeeting")]
