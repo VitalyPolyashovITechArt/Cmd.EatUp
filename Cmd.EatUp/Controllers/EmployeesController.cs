@@ -82,8 +82,7 @@ namespace Cmd.EatUp.Controllers
             ProfileInfoViewModel viewModel = new ProfileInfoViewModel();
            DatabaseRepository repository = new DatabaseRepository();
             var result = repository.GetProfile(id);
-            viewModel.FirstName = result.FirstName;
-            viewModel.LastName = result.LastName;
+            viewModel.FullName = String.Format("{0} {1}", result.FirstName, result.LastName);
             viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
             viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
             viewModel.ImagePath = result.ImagePath;
