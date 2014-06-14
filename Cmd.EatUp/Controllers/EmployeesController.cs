@@ -1,18 +1,15 @@
-﻿using System.Reflection.Emit;
+﻿
 using System.Web.Http;
 using Cmd.EatUp.Data;
 using Cmd.EatUp.Models;
 using Cmd.EatUpTests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using Microsoft.Owin.Host.SystemWeb;
-using Microsoft.Owin.Security;
+
 
 namespace Cmd.EatUp.Controllers
 {
+    [RoutePrefix("Employees")]
     public class EmployeesController : ApiController
     {
     public class ResponseObject
@@ -43,8 +40,8 @@ namespace Cmd.EatUp.Controllers
             repository.SaveEmployees(employees);
         }
 
-        [System.Web.Http.Route("Authenticate")]
-        [System.Web.Http.HttpGet]
+        [Route("Authenticate")]
+        [HttpGet]
         public string Authenticate(string userName, string password)
         {
             string sessionId = String.Empty;
@@ -60,14 +57,18 @@ namespace Cmd.EatUp.Controllers
             }
         }
 
-        [System.Web.Mvc.Route("GetProfileInfo/{id}")]
-
+        [Route("GetProfileInfo")]
+        [HttpGet]
         public ProfileInfoViewModel GetProfileInfo(int id)
         {
             ProfileInfoViewModel viewModel = new ProfileInfoViewModel();
            DatabaseRepository repository = new DatabaseRepository();
             var result = repository.GetProfile(id);
             viewModel.FirstName = result.FirstName;
+            viewModel.LastName = result.LastName;
+            viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
+            viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(-30);
+
             return viewModel;
         }
 
