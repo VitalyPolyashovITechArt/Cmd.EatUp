@@ -71,7 +71,7 @@ namespace Cmd.EatUp.Controllers
             viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
             viewModel.ImagePath = result.ImagePath;
 
-            var meetings = repository.GetInvitations(id);
+            viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
 
             return viewModel;
         }
@@ -79,7 +79,12 @@ namespace Cmd.EatUp.Controllers
 
         private MeetingViewModel ConvertToMeetingViewMOdel(Meeting model)
         {
+            if (model == null)
+            {
+                return null;
+            }
             var viewModel = new MeetingViewModel();
+            viewModel.Id = model.Id;
             viewModel.PlaceName = model.Place.Name;
             viewModel.Date = model.Time;
             viewModel.Achievements = new List<EmployeeViewModel>();
@@ -97,6 +102,7 @@ namespace Cmd.EatUp.Controllers
             var employeeViewMOdel = new EmployeeViewModel();
             employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
             employeeViewMOdel.ImageUrl = model.ImagePath;
+            employeeViewMOdel.Id = model.ProfileId.Value;
             return employeeViewMOdel;
         }
 
@@ -108,6 +114,22 @@ namespace Cmd.EatUp.Controllers
             var repository = new DatabaseRepository();
             return repository.GetPreferrablePeople(id).Select(employee => ConvertToEmployeeViewMOdel(employee)).ToList();
 
+        }
+
+        [Route("JoinMeeting")]
+        [HttpGet]
+        public void Join(int id, int meetingId)
+        {
+            var repository = new DatabaseRepository();
+            repository.JoinMeeting(id, meetingId);
+        }
+
+        [Route("InviteMeeting")]
+        [HttpGet]
+        public void Invite(int id, int targetId)
+        {
+            var repository = new DatabaseRepository();
+            repository.JoinMeeting(id, targetId);
         }
     }
 }

@@ -103,5 +103,38 @@ namespace Cmd.EatUp.Data
             return sum;
         }
 
+        public void JoinMeeting(int id, int meetingId)
+        {
+            var employee = GetProfile(id);
+            var meeting = context.Meetings.Single(x => x.Id == meetingId);
+            meeting.Employees.Add(employee);
+            if (employee.Invites.Contains(meeting))
+            {
+                employee.Invites.Remove(meeting);
+            }
+            context.SaveChanges();
+        }
+
+        public void InviteToMeeting(int id, int targetEmployeeId)
+        {
+            var employee = GetProfile(id);
+            var meeting = GetAcceptedMeeting(id);
+            var targetEmployee = GetProfile(targetEmployeeId);
+            if (meeting == null)
+            {
+                meeting= new Meeting();
+                {
+                    meeting.PlaceId = employee.PlaceId.Value;
+                    meeting.Time = employee.Time.Value;
+                    meeting.Employees = new List<Employee>();
+                    meeting.Employees.Add(employee);
+                    meeting.InvitedEmployees = new List<Employee>();
+                    meeting.InvitedEmployees.Add(targetEmployee);
+                }
+            }
+            meeting.InvitedEmployees.Add(employee);
+            context.SaveChanges();
+        }
+
     }
 }
