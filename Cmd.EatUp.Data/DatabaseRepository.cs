@@ -49,12 +49,15 @@ namespace Cmd.EatUp.Data
         {
             Employee currentEmployee = GetProfile(id);
 
-            DateTime startTime = currentEmployee.Time.Value.AddMinutes(-30);
-            DateTime finishTime = currentEmployee.Time.Value.AddMinutes(30);
-            var result = context.Meetings
-                .Where(x => x.Time >= startTime && x.Time <= finishTime)
+            var knownPeople = GetPeopleYouEverMet(id).ToList();
+
+
+            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+            var result = context.Meetings.Include("Employees").ToList()
+                .Where(x => x.Time.TimeOfDay >= startTime && x.Time.TimeOfDay <= finishTime)
                 .OrderByDescending(y =>
-                    GetEmployeeWeights(currentEmployee, y.Employees)
+                    GetEmployeeWeights(currentEmployee, y.Employees, knownPeople)
                         .Sum(z => z.Value)
                 ).Take(10)
                 .ToList();
@@ -64,17 +67,17 @@ namespace Cmd.EatUp.Data
 
         private IEnumerable<Meeting> GetNearestMeetings(DateTime? time)
         {
-            TimeSpan startTime = time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
-            TimeSpan finishTime = time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+            
             var allmeetings = context.Meetings.ToList();
             //!!!!!!!!!!!
-            return allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date);
+            return allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date).Where(x => x.Time > DateTime.Now);
         }
 
         private IEnumerable<Employee> GetAlonePeople(int id)
         {
             Employee currentEmployee = GetProfile(id);
-
+            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
            var todaysMeetings= GetNearestMeetings(currentEmployee.Time).Select(y => y.Id);
             var allemployees = context.Employees.ToList();
             var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
@@ -86,22 +89,19 @@ namespace Cmd.EatUp.Data
         {
             var currentEmployee = GetProfile(id);
             var result = GetAlonePeople(id);
-            result = result.OrderByDescending(x => GetEmployeeWeight(currentEmployee, x));
+            var knownPeople = GetPeopleYouEverMet(id).ToList();
+            result = result.OrderByDescending(x => GetEmployeeWeight(currentEmployee, x, knownPeople));
             return result.Take(10).ToList();
         }
 
-        private Dictionary<int, int> GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees)
+        private Dictionary<int, int> GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees, IEnumerable<int> knownPeople )
         {
-            Dictionary<int, int> weightDic = employees.ToDictionary(x => x.ProfileId.Value, y => 0);
-            employees.Where(x => x.Room == employee.Room).ToList().ForEach(y => weightDic[y.ProfileId.Value]+=5);
-            employees.Where(x => x.ProjectId == employee.ProjectId).ToList().ForEach(y => weightDic[y.ProfileId.Value] += 4);
-            employees.Where(x => x.DepartmentId == employee.DepartmentId).ToList().ForEach(y => weightDic[y.ProfileId.Value] += 2);
-            employees.Where(x => x.Position == employee.Position).ToList().ForEach(y => weightDic[y.ProfileId.Value] += 1);
-
+            Dictionary<int, int> weightDic = employees.ToDictionary(x => x.ProfileId.Value, y => GetEmployeeWeight(employee, y, knownPeople));
+           
             return weightDic;
         }
 
-        private int GetEmployeeWeight(Employee employee, Employee targetEmployee)
+        private int GetEmployeeWeight(Employee employee, Employee targetEmployee, IEnumerable<int> knownPeople )
         {
             int sum = 0;
 
@@ -109,10 +109,17 @@ namespace Cmd.EatUp.Data
             {
                 sum += 5;
             }
-
+            if (knownPeople.Contains(targetEmployee.ProfileId.Value))
+            {
+                sum += 4;
+            }
             if (targetEmployee.ProjectId == employee.ProjectId)
             {
                 sum += 4;
+            }
+            if ( Math.Abs(targetEmployee.Birthday.Value - employee.Birthday.Value) < 2)
+            {
+                sum += 3;
             }
             if (targetEmployee.DepartmentId == employee.DepartmentId)
             {

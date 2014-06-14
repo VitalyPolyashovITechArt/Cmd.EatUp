@@ -10,6 +10,6 @@ namespace Cmd.EatUp.Models
 
         public string PlaceName { get; set; }
 
-        public List<EmployeeViewModel> Achievements { get; set; }
+        public List<EmployeeViewModel> Employees { get; set; }
     }
 }

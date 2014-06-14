@@ -104,10 +104,10 @@ namespace Cmd.EatUp.Controllers
             viewModel.Id = model.Id;
             viewModel.PlaceName = model.Place.Name;
             viewModel.Date = model.Time;
-            viewModel.Achievements = new List<EmployeeViewModel>();
+            viewModel.Employees = new List<EmployeeViewModel>();
             foreach (var employee in model.Employees)
             {
-                viewModel.Achievements.Add(ConvertToEmployeeViewMOdel(employee));
+                viewModel.Employees.Add(ConvertToEmployeeViewMOdel(employee));
             }
 
             return viewModel;
@@ -131,21 +131,13 @@ namespace Cmd.EatUp.Controllers
             return repository.GetPreferrablePeople(id).Select(ConvertToEmployeeViewMOdel).ToList();
         }
 
-        private MeetingViewModel ConvertToMeetingViewModel(Meeting model)
-        {
-            return new MeetingViewModel()
-            {
-                Date = model.Time,
-                PlaceName = model.Place.Name
-            };
-        }
 
         [Route("GetMeetings")]
         [HttpGet]
         public List<MeetingViewModel> GetMeetings(int id)
         {
             var repository = new DatabaseRepository();
-            return repository.GetMeetings(id).Select(ConvertToMeetingViewModel).ToList();
+            return repository.GetMeetings(id).Select(ConvertToMeetingViewMOdel).ToList();
         }
 
         [Route("Join")]
