@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cmd.EatUp", "Cmd.EatUp\Cmd.EatUp.csproj", "{2259FFE0-D72F-4C9E-8D18-940D90A625C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cmd.EatUp.Data", "Cmd.EatUp.Data\Cmd.EatUp.Data.csproj", "{49AA70BD-E546-4D2D-98E1-2DF35D1387AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cmd.EatUpTests", "Cmd.EatUpTests\Cmd.EatUpTests.csproj", "{3DE0FC33-F779-4B47-AB22-93EFDA848001}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +21,10 @@ Global
 		{49AA70BD-E546-4D2D-98E1-2DF35D1387AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49AA70BD-E546-4D2D-98E1-2DF35D1387AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49AA70BD-E546-4D2D-98E1-2DF35D1387AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DE0FC33-F779-4B47-AB22-93EFDA848001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DE0FC33-F779-4B47-AB22-93EFDA848001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DE0FC33-F779-4B47-AB22-93EFDA848001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DE0FC33-F779-4B47-AB22-93EFDA848001}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
