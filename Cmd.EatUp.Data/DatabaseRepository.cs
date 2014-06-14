@@ -38,7 +38,7 @@ namespace Cmd.EatUp.Data
 
         public Meeting GetAcceptedMeeting(int id)
         {
-            return GetProfile(id).Meetings.SingleOrDefault(x => x.Time.Date == DateTime.Now.Date);
+            return GetProfile(id).Meetings.FirstOrDefault(x => x.Time.Date == DateTime.Now.Date);
         }
         public List<Meeting> GetInvitations(int id)
         {
@@ -54,11 +54,11 @@ namespace Cmd.EatUp.Data
 
             TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
             TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-            var result = context.Meetings.Include("Employees").ToList()
-                .Where(x => x.Time.TimeOfDay >= startTime && x.Time.TimeOfDay <= finishTime)
+            var result = context.Meetings.ToList()
+                .Where(x => x.Time.TimeOfDay >= startTime && x.Time.TimeOfDay <= finishTime).Where(x => !x.Employees.Contains(currentEmployee))
                 .OrderByDescending(y =>
                     GetEmployeeWeights(currentEmployee, y.Employees, knownPeople)
-                        .Sum(z => z.Value)
+                        
                 ).Take(10)
                 .ToList();
 
@@ -66,8 +66,7 @@ namespace Cmd.EatUp.Data
         }
 
         private IEnumerable<Meeting> GetNearestMeetings(DateTime? time)
-        {
-            
+        {          
             var allmeetings = context.Meetings.ToList();
             //!!!!!!!!!!!
             return allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date).Where(x => x.Time > DateTime.Now);
@@ -94,11 +93,11 @@ namespace Cmd.EatUp.Data
             return result.Take(10).ToList();
         }
 
-        private Dictionary<int, int> GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees, IEnumerable<int> knownPeople )
+        private int GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees, IEnumerable<int> knownPeople )
         {
             Dictionary<int, int> weightDic = employees.ToDictionary(x => x.ProfileId.Value, y => GetEmployeeWeight(employee, y, knownPeople));
            
-            return weightDic;
+            return weightDic.Sum(x => x.Value);
         }
 
         private int GetEmployeeWeight(Employee employee, Employee targetEmployee, IEnumerable<int> knownPeople )
@@ -117,13 +116,13 @@ namespace Cmd.EatUp.Data
             {
                 sum += 4;
             }
-            if ( Math.Abs(targetEmployee.Birthday.Value - employee.Birthday.Value) < 2)
+            if ( Math.Abs(targetEmployee.Birthday.Value - employee.Birthday.Value) <= 2)
             {
                 sum += 3;
             }
             if (targetEmployee.DepartmentId == employee.DepartmentId)
             {
-                sum += 2;
+                sum += 3;
             }
             if (targetEmployee.Position == employee.Position)
             {
@@ -137,6 +136,7 @@ namespace Cmd.EatUp.Data
         {
             var employee = GetProfile(id);
             var meeting = context.Meetings.Single(x => x.Id == meetingId);
+            employee.Time = meeting.Time;
             meeting.Employees.Add(employee);
             if (employee.Invites.Contains(meeting))
             {
@@ -175,13 +175,44 @@ namespace Cmd.EatUp.Data
 
         public void InviteRandomEmployees(int id)
         {
-            var result = GetAlonePeople(id).ToList().Shuffle(3);
+            var result = GetAlonePeople(id).ToList().Shuffle(5);
             result.ForEach(x => InviteToMeeting(id, x.ProfileId.Value));
         }
 
         private IEnumerable<int> GetPeopleYouEverMet(int id)
         {
             return GetProfile(id).Meetings.SelectMany(x => x.Employees).Select(y => y.ProfileId.Value);
+        }
+
+
+        public IEnumerable<string> GetAchievements(int id)
+        {
+            var list = new List<string>();
+            var meetings = context.Meetings.ToList();
+            if (meetings.OrderByDescending(x => x.Employees.Count)
+                .First()
+                .Employees.Select(y => y.ProfileId)
+                .Contains(id))
+            {
+                list.Add("BiggestTeam");
+            }
+
+            if (meetings.OrderByDescending(x => x.Time.TimeOfDay)
+                .First()
+                .Employees.Select(y => y.ProfileId)
+                .Contains(id))
+            {
+                list.Add("LatestTeam");
+            }
+
+            if (meetings.OrderBy(x => x.Time.TimeOfDay)
+               .First()
+               .Employees.Select(y => y.ProfileId)
+               .Contains(id))
+            {
+                list.Add("EarliestTeam");
+            }
+            return list;
         }
     }
 }

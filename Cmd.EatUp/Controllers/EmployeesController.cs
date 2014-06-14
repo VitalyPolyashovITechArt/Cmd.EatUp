@@ -85,8 +85,9 @@ namespace Cmd.EatUp.Controllers
             viewModel.FullName = String.Format("{0} {1}", result.FirstName, result.LastName);
             viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
             viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
-            viewModel.ImagePath = result.ImagePath;
-
+            viewModel.ExactTime = result.Time.Value;
+            viewModel.ImagePath = "http://10.168.0.255/content/" + result.ProfileId.Value + ".jpg"; ;
+            viewModel.Achievements = repository.GetAchievements(id).ToList();
             viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
 
             return viewModel;
@@ -117,7 +118,7 @@ namespace Cmd.EatUp.Controllers
         {
             var employeeViewMOdel = new EmployeeViewModel();
             employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
-            employeeViewMOdel.ImageUrl = model.ImagePath;
+            employeeViewMOdel.ImageUrl = "http://10.168.0.255/content/" + model.ProfileId.Value + ".jpg";
             employeeViewMOdel.Id = model.ProfileId.Value;
             return employeeViewMOdel;
         }
