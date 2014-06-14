@@ -97,7 +97,7 @@ namespace Cmd.EatUp.Data
             {
                 sum += 2;
             }
-            if (targetEmployee.Room == employee.Position)
+            if (targetEmployee.Position == employee.Position)
             {
                 sum += 1;
             }
