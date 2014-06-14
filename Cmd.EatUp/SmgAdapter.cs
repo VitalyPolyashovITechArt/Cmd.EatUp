@@ -79,7 +79,7 @@ namespace Cmd.EatUpTests
         private void ExtendEmployee(Employee employee, string soapResult)
         {
             dynamic resultObj = JsonConvert.DeserializeObject(soapResult);
-            employee.Birthday = ((DateTime)EpochToDateTime(resultObj.Birthday)).Year;
+            employee.Birthday = EpochToDateTime(resultObj.Birthday).Date;
             employee.Position = resultObj.Rank;
         }
 
