@@ -55,6 +55,7 @@
     <Compile Include="Employee.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Meeting.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

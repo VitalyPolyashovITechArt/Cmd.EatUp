@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Cmd.EatUp.Helpers;
 
 namespace Cmd.EatUp.Data
 {
@@ -59,19 +62,27 @@ namespace Cmd.EatUp.Data
             return result;
         }
 
-        public IEnumerable<Employee> GetPreferrablePeople(int id)
+        private IEnumerable<Employee> GetAlonePeople(int id)
         {
             Employee currentEmployee = GetProfile(id);
 
-            DateTime startTime = currentEmployee.Time.Value.AddMinutes(-30);
-            DateTime finishTime = currentEmployee.Time.Value.AddMinutes(30);
+            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+            var allmeetings = context.Meetings.ToList();
+            //!!!!!!!!!!!
+            var todaysMeetings = allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date).Select(y => y.Id);
+            var allemployees = context.Employees.ToList();
+            var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
+            result = result.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id)));
+            return result;
+        }
 
-            var todaysMeetings = context.Meetings.Where(x => x.Time.Date == DateTime.Now.Date).Select(y=> y.Id);
-
-            var result  = context.Employees.Where(x => x.Time >= startTime && x.Time <= finishTime);
-            result = result.Where(y => !y.Meetings.Any(f=> todaysMeetings.Contains(f.Id)));
+        public IEnumerable<Employee> GetPreferrablePeople(int id)
+        {
+            var currentEmployee = GetProfile(id);
+            var result = GetAlonePeople(id);
             result = result.OrderByDescending(x => GetEmployeeWeight(currentEmployee, x));
-            return result.ToList();
+            return result.Take(10).ToList();
         }
 
         private Dictionary<int, int> GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees)
@@ -93,6 +104,7 @@ namespace Cmd.EatUp.Data
             {
                 sum += 5;
             }
+
             if (targetEmployee.ProjectId == employee.ProjectId)
             {
                 sum += 4;
@@ -130,21 +142,34 @@ namespace Cmd.EatUp.Data
             {
                 meeting= new Meeting();
                 {
+                    meeting.Employees = new Collection<Employee>();
+                    meeting.Employees.Add(employee);
                     meeting.PlaceId = employee.PlaceId.Value;
                     meeting.Time = employee.Time.Value;
-                    meeting.Employees = new List<Employee>();
-                    meeting.Employees.Add(employee);
-                    meeting.InvitedEmployees = new List<Employee>();
-                    meeting.InvitedEmployees.Add(targetEmployee);
+                    meeting.InvitedEmployees = new List<Employee>();              
+                    context.Meetings.Add(meeting);
                 }
             }
-            meeting.InvitedEmployees.Add(employee);
+            meeting.InvitedEmployees.Add(targetEmployee);
+            
+            
             context.SaveChanges();
         }
 
         public IEnumerable<Employee> GetAllEmployees()
         {
             return context.Employees;
+        }
+
+        public void InviteRandomEmployees(int id)
+        {
+            var result = GetAlonePeople(id).ToList().Shuffle(3);
+            result.ForEach(x => InviteToMeeting(id, x.ProfileId.Value));
+        }
+
+        private IEnumerable<int> GetPeopleYouEverMet(int id)
+        {
+            return GetProfile(id).Meetings.SelectMany(x => x.Employees).Select(y => y.ProfileId.Value);
         }
     }
 }
