@@ -1,5 +1,6 @@
 ﻿
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Serialization;
 using System.Web.Http;
 using Cmd.EatUp.Data;
@@ -113,6 +114,14 @@ namespace Cmd.EatUp.Controllers
             return viewModel;
         }
 
+        private PlacesViewModel ConvertToPlacesViewModel(Place model)
+        {
+            return new PlacesViewModel()
+            {
+                PlaceName = model.Name
+            };
+        }
+
 
         private EmployeeViewModel ConvertToEmployeeViewMOdel(Employee model)
         {
@@ -140,6 +149,14 @@ namespace Cmd.EatUp.Controllers
             return repository.GetMeetings(id).Select(ConvertToMeetingViewMOdel).ToList();
         }
 
+        [Route("GetPlaces")]
+        [HttpGet]
+        public IEnumerable<PlacesViewModel> GetPlaces()
+        {
+            var repository = new DatabaseRepository();
+            return repository.GetAllPlaces().Select(ConvertToPlacesViewModel);
+        }
+
         [Route("Join")]
         [HttpGet]
         public void Join(int id, int meetingId)
@@ -162,6 +179,13 @@ namespace Cmd.EatUp.Controllers
         {
             var repository = new DatabaseRepository();
             repository.InviteRandomEmployees(id);
+        }
+
+        [Route("ChangePlaceAndTime")]
+        public void ChangePlaceAndTime(int id, DateTime? time, string placeName)
+        {
+            var repository = new DatabaseRepository();
+            repository.ChangePlaceAndTime(id, time, placeName);
         }
     }
 }
