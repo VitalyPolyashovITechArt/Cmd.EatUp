@@ -29,20 +29,20 @@ namespace Cmd.EatUp.Controllers
     {
         public string SessionId { get; set; }
     }
-        // GET api/<controller>
-       //[Route("")]
-        //[HttpGet]
+    //    // GET api/<controller>
+    //   //[Route("")]
+    //    //[HttpGet]
 
-    [Route("Fill")]
-    [HttpGet]
-        public void Fill()
-        {
-            var adapter = new SmgAdapter();
-            var sessionId = adapter.Authenticate("vitaly.polyashov", "qwerty6");
-            var employees = adapter.GetAllEmployees(sessionId);
-            DatabaseRepository repository = new DatabaseRepository();
-            //repository.SaveEmployees(employees);
-        }
+    //[Route("Fill")]
+    //[HttpGet]
+    //    public void Fill()
+    //    {
+    //        var adapter = new SmgAdapter();
+    //        var sessionId = adapter.Authenticate("vitaly.polyashov", "qwerty6");
+    //        var employees = adapter.GetAllEmployees(sessionId);
+    //        DatabaseRepository repository = new DatabaseRepository();
+    //        //repository.SaveEmployees(employees);
+    //    }
 
         [Route("Authenticate")]
         [HttpGet]
@@ -131,7 +131,7 @@ namespace Cmd.EatUp.Controllers
             return repository.GetMeetings(id).Select(ConvertToMeetingViewModel).ToList();
         }
 
-        [Route("JoinMeeting")]
+        [Route("Join")]
         [HttpGet]
         public void Join(int id, int meetingId)
         {
@@ -139,12 +139,12 @@ namespace Cmd.EatUp.Controllers
             repository.JoinMeeting(id, meetingId);
         }
 
-        [Route("InviteMeeting")]
+        [Route("Invite")]
         [HttpGet]
         public void Invite(int id, int targetId)
         {
             var repository = new DatabaseRepository();
-            repository.JoinMeeting(id, targetId);
+            repository.InviteToMeeting(id, targetId);
         }
     }
 }

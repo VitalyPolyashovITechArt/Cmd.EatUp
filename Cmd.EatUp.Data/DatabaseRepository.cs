@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
@@ -57,15 +58,16 @@ namespace Cmd.EatUp.Data
         {
             Employee currentEmployee = GetProfile(id);
 
-            DateTime startTime = currentEmployee.Time.Value.AddMinutes(-30);
-            DateTime finishTime = currentEmployee.Time.Value.AddMinutes(30);
-
-            var todaysMeetings = context.Meetings.Where(x => x.Time.Date == DateTime.Now.Date).Select(y=> y.Id);
-
-            var result  = context.Employees.Where(x => x.Time >= startTime && x.Time <= finishTime);
+            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+            var allmeetings = context.Meetings.ToList();
+            //!!!!!!!!!!!
+            var todaysMeetings = allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date).Select(y=> y.Id);
+            var allemployees = context.Employees.ToList();
+            var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
             result = result.Where(y => !y.Meetings.Any(f=> todaysMeetings.Contains(f.Id)));
             result = result.OrderByDescending(x => GetEmployeeWeight(currentEmployee, x));
-            return result.ToList();
+            return result.Take(10).ToList();
         }
 
         private Dictionary<int, int> GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees)
@@ -126,13 +128,13 @@ namespace Cmd.EatUp.Data
                 {
                     meeting.PlaceId = employee.PlaceId.Value;
                     meeting.Time = employee.Time.Value;
-                    meeting.Employees = new List<Employee>();
-                    meeting.Employees.Add(employee);
                     meeting.InvitedEmployees = new List<Employee>();
                     meeting.InvitedEmployees.Add(targetEmployee);
+                    context.Meetings.Add(meeting);
                 }
             }
-            meeting.InvitedEmployees.Add(employee);
+            meeting.Employees.Add(employee);
+            
             context.SaveChanges();
         }
 
