@@ -27,6 +27,15 @@ namespace Cmd.EatUp.Data
             return context.Employees.Single(x => x.ProfileId == id);
         }
 
+        public Meeting GetAcceptedMeeting(int id)
+        {
+            return GetProfile(id).Meetings.SingleOrDefault(x => x.Time.Date == DateTime.Now.Date);
+        }
+        public List<Meeting> GetInvitations(int id)
+        {
+            return GetProfile(id).Invites.Where(x => x.Time.Date == DateTime.Now.Date).ToList();
+        }
+
         public List<Meeting> GetMeetings(int id)
         {
             Employee currentEmployee = GetProfile(id);

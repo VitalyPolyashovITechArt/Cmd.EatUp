@@ -17,6 +17,8 @@ namespace Cmd.EatUp.Models
         public DateTime FinishPreferredTime { get; set; }
         public List<Achievement> Achievements { get; set; }
 
-        public List<Meeting> Invitations { get; set; }
+        public MeetingViewModel CurrentMeeting { get; set; }
+
+        public List<MeetingViewModel> Invitations { get; set; }
     }
 }

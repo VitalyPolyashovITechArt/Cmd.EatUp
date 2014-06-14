@@ -70,10 +70,11 @@ namespace Cmd.EatUp.Controllers
             viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
             viewModel.ImagePath = result.ImagePath;
 
-            //repository.GetInvitations()
+            var meetings = repository.GetInvitations(id);
 
             return viewModel;
         }
+
 
         
     }

@@ -12,10 +12,6 @@ namespace Cmd.EatUp.Models
 
         public string PlaceName { get; set; }
 
-        public DateTime StartPreferredTime { get; set; }
-        public DateTime FinishPreferredTime { get; set; }
-        public List<Achievement> Achievements { get; set; }
-
-        public List<Meeting> Invitations { get; set; }
+        public List<EmployeeViewModel> Achievements { get; set; }
     }
 }
