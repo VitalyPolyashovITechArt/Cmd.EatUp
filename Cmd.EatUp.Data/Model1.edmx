@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="eatupModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="eatupModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Achievements">
           <Key>
             <PropertyRef Name="Id" />
@@ -24,6 +24,17 @@
           <Property Name="Room" Type="varchar(max)" />
           <Property Name="DepartmentId" Type="int" Nullable="false" />
           <Property Name="Time" Type="datetime" />
+          <Property Name="PlaceId" Type="int" />
+          <Property Name="ProjectId" Type="int" />
+          <Property Name="Position" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Invites">
+          <Key>
+            <PropertyRef Name="MeetingId" />
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="MeetingId" Type="int" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Meetings">
           <Key>
@@ -57,6 +68,30 @@
             </Principal>
             <Dependent Role="Achievements">
               <PropertyRef Name="EmpolyeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invites_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="Invites" Type="Self.Invites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invites">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invites_Meetings">
+          <End Role="Meetings" Type="Self.Meetings" Multiplicity="1" />
+          <End Role="Invites" Type="Self.Invites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Meetings">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invites">
+              <PropertyRef Name="MeetingId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -99,12 +134,21 @@
         <EntityContainer Name="eatupModelStoreContainer">
           <EntitySet Name="Achievements" EntityType="Self.Achievements" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invites" EntityType="Self.Invites" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meetings_Employees" EntityType="Self.Meetings_Employees" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Places" EntityType="Self.Places" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Achievements_Employees" Association="Self.FK_Achievements_Employees">
             <End Role="Employees" EntitySet="Employees" />
             <End Role="Achievements" EntitySet="Achievements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invites_Employees" Association="Self.FK_Invites_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="Invites" EntitySet="Invites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invites_Meetings" Association="Self.FK_Invites_Meetings">
+            <End Role="Meetings" EntitySet="Meetings" />
+            <End Role="Invites" EntitySet="Invites" />
           </AssociationSet>
           <AssociationSet Name="FK_Meetings_Employees_Employees" Association="Self.FK_Meetings_Employees_Employees">
             <End Role="Employees" EntitySet="Employees" />
@@ -119,11 +163,32 @@
             <End Role="Meetings" EntitySet="Meetings" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="eatupModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="eatupEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Achievements" EntityType="eatupModel.Achievement" />
+          <EntitySet Name="Employees" EntityType="eatupModel.Employee" />
+          <EntitySet Name="Meetings" EntityType="eatupModel.Meeting" />
+          <EntitySet Name="Places" EntityType="eatupModel.Place" />
+          <AssociationSet Name="FK_Achievements_Employees" Association="eatupModel.FK_Achievements_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Achievement" EntitySet="Achievements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Meetings_Meetings1" Association="eatupModel.FK_Meetings_Meetings1">
+            <End Role="Place" EntitySet="Places" />
+            <End Role="Meeting" EntitySet="Meetings" />
+          </AssociationSet>
+          <AssociationSet Name="Invites" Association="eatupModel.Invites">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Meeting" EntitySet="Meetings" />
+          </AssociationSet>
+          <AssociationSet Name="Meetings_Employees" Association="eatupModel.Meetings_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Meeting" EntitySet="Meetings" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Achievement">
           <Key>
             <PropertyRef Name="Id" />
@@ -131,7 +196,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="EmpolyeeId" Type="Int32" Nullable="false" />
           <Property Name="AchievementName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Employee" Relationship="Self.FK_Achievements_Employees" FromRole="Achievements" ToRole="Employees" />
+          <NavigationProperty Name="Employee" Relationship="eatupModel.FK_Achievements_Employees" FromRole="Achievement" ToRole="Employee" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -144,8 +209,12 @@
           <Property Name="Room" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DepartmentId" Type="Int32" Nullable="false" />
           <Property Name="Time" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Achievements" Relationship="Self.FK_Achievements_Employees" FromRole="Employees" ToRole="Achievements" />
-          <NavigationProperty Name="Meetings" Relationship="Self.Meetings_Employees" FromRole="Employees" ToRole="Meetings" />
+          <Property Name="PlaceId" Type="Int32" />
+          <Property Name="ProjectId" Type="Int32" />
+          <Property Name="Position" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Achievements" Relationship="eatupModel.FK_Achievements_Employees" FromRole="Employee" ToRole="Achievement" />
+          <NavigationProperty Name="Meetings" Relationship="eatupModel.Invites" FromRole="Employee" ToRole="Meeting" />
+          <NavigationProperty Name="Invites" Relationship="eatupModel.Meetings_Employees" FromRole="Employee" ToRole="Meeting" />
         </EntityType>
         <EntityType Name="Meeting">
           <Key>
@@ -154,8 +223,9 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="PlaceId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Place" Relationship="Self.FK_Meetings_Meetings1" FromRole="Meetings" ToRole="Places" />
-          <NavigationProperty Name="Employees" Relationship="Self.Meetings_Employees" FromRole="Meetings" ToRole="Employees" />
+          <NavigationProperty Name="Place" Relationship="eatupModel.FK_Meetings_Meetings1" FromRole="Meeting" ToRole="Place" />
+          <NavigationProperty Name="Employees" Relationship="eatupModel.Invites" FromRole="Meeting" ToRole="Employee" />
+          <NavigationProperty Name="InvitedEmployees" Relationship="eatupModel.Meetings_Employees" FromRole="Meeting" ToRole="Employee" />
         </EntityType>
         <EntityType Name="Place">
           <Key>
@@ -163,55 +233,41 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Meetings" Relationship="Self.FK_Meetings_Meetings1" FromRole="Places" ToRole="Meetings" />
+          <NavigationProperty Name="Meetings" Relationship="eatupModel.FK_Meetings_Meetings1" FromRole="Place" ToRole="Meeting" />
         </EntityType>
         <Association Name="FK_Achievements_Employees">
-          <End Role="Employees" Type="Self.Employee" Multiplicity="1" />
-          <End Role="Achievements" Type="Self.Achievement" Multiplicity="*" />
+          <End Type="eatupModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="eatupModel.Achievement" Role="Achievement" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Employees">
+            <Principal Role="Employee">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Achievements">
+            <Dependent Role="Achievement">
               <PropertyRef Name="EmpolyeeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Meetings_Meetings1">
-          <End Role="Places" Type="Self.Place" Multiplicity="1" />
-          <End Role="Meetings" Type="Self.Meeting" Multiplicity="*" />
+          <End Type="eatupModel.Place" Role="Place" Multiplicity="1" />
+          <End Type="eatupModel.Meeting" Role="Meeting" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Places">
+            <Principal Role="Place">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Meetings">
+            <Dependent Role="Meeting">
               <PropertyRef Name="PlaceId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="Meetings_Employees">
-          <End Role="Employees" Type="Self.Employee" Multiplicity="*" />
-          <End Role="Meetings" Type="Self.Meeting" Multiplicity="*" />
+        <Association Name="Invites">
+          <End Type="eatupModel.Employee" Role="Employee" Multiplicity="*" />
+          <End Type="eatupModel.Meeting" Role="Meeting" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="eatupEntities1" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Achievements" EntityType="Self.Achievement" />
-          <EntitySet Name="Employees" EntityType="Self.Employee" />
-          <EntitySet Name="Meetings" EntityType="Self.Meeting" />
-          <EntitySet Name="Places" EntityType="Self.Place" />
-          <AssociationSet Name="FK_Achievements_Employees" Association="Self.FK_Achievements_Employees">
-            <End Role="Employees" EntitySet="Employees" />
-            <End Role="Achievements" EntitySet="Achievements" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Meetings_Meetings1" Association="Self.FK_Meetings_Meetings1">
-            <End Role="Places" EntitySet="Places" />
-            <End Role="Meetings" EntitySet="Meetings" />
-          </AssociationSet>
-          <AssociationSet Name="Meetings_Employees" Association="Self.Meetings_Employees">
-            <End Role="Employees" EntitySet="Employees" />
-            <End Role="Meetings" EntitySet="Meetings" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema>
+        <Association Name="Meetings_Employees">
+          <End Type="eatupModel.Employee" Role="Employee" Multiplicity="*" />
+          <End Type="eatupModel.Meeting" Role="Meeting" Multiplicity="*" />
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -220,48 +276,59 @@
           <EntitySetMapping Name="Achievements">
             <EntityTypeMapping TypeName="eatupModel.Achievement">
               <MappingFragment StoreEntitySet="Achievements">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="EmpolyeeId" ColumnName="EmpolyeeId" />
                 <ScalarProperty Name="AchievementName" ColumnName="AchievementName" />
+                <ScalarProperty Name="EmpolyeeId" ColumnName="EmpolyeeId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Employees">
             <EntityTypeMapping TypeName="eatupModel.Employee">
               <MappingFragment StoreEntitySet="Employees">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
-                <ScalarProperty Name="Room" ColumnName="Room" />
-                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="PlaceId" ColumnName="PlaceId" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
+                <ScalarProperty Name="Room" ColumnName="Room" />
+                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Meetings">
             <EntityTypeMapping TypeName="eatupModel.Meeting">
               <MappingFragment StoreEntitySet="Meetings">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="PlaceId" ColumnName="PlaceId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Places">
             <EntityTypeMapping TypeName="eatupModel.Place">
               <MappingFragment StoreEntitySet="Places">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="Meetings_Employees" TypeName="eatupModel.Meetings_Employees" StoreEntitySet="Meetings_Employees">
-            <EndProperty Name="Employees">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="Meetings">
+          <AssociationSetMapping Name="Invites" TypeName="eatupModel.Invites" StoreEntitySet="Invites">
+            <EndProperty Name="Meeting">
               <ScalarProperty Name="Id" ColumnName="MeetingId" />
+            </EndProperty>
+            <EndProperty Name="Employee">
+              <ScalarProperty Name="Id" ColumnName="EmployeeId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Meetings_Employees" TypeName="eatupModel.Meetings_Employees" StoreEntitySet="Meetings_Employees">
+            <EndProperty Name="Meeting">
+              <ScalarProperty Name="Id" ColumnName="MeetingId" />
+            </EndProperty>
+            <EndProperty Name="Employee">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

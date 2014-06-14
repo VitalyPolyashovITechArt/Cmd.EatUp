@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cmd.EatUp.Data;
+using Cmd.EatUpTests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,9 +12,13 @@ namespace Cmd.EatUp.Controllers
     public class EmployeesController : ApiController
     {
         // GET api/<controller>
-        public IEnumerable<string> Get()
+        public void Fill()
         {
-            return new string[] { "value1", "value2" };
+            var adapter = new SmgAdapter();
+            var sessionId = adapter.Authenticate("vitaly.polyashov", "qwerty6");
+            var employees = adapter.GetAllEmployees(sessionId);
+            DatabaseRepository repository = new DatabaseRepository();
+            repository.SaveEmployees(employees);
         }
 
         // GET api/<controller>/5

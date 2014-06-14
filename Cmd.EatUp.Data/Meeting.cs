@@ -17,6 +17,7 @@ namespace Cmd.EatUp.Data
         public Meeting()
         {
             this.Employees = new HashSet<Employee>();
+            this.InvitedEmployees = new HashSet<Employee>();
         }
     
         public int Id { get; set; }
@@ -25,5 +26,6 @@ namespace Cmd.EatUp.Data
     
         public virtual Place Place { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Employee> InvitedEmployees { get; set; }
     }
 }

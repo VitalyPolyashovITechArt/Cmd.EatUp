@@ -18,6 +18,7 @@ namespace Cmd.EatUp.Data
         {
             this.Achievements = new HashSet<Achievement>();
             this.Meetings = new HashSet<Meeting>();
+            this.Invites = new HashSet<Meeting>();
         }
     
         public int Id { get; set; }
@@ -27,8 +28,12 @@ namespace Cmd.EatUp.Data
         public string Room { get; set; }
         public int DepartmentId { get; set; }
         public Nullable<System.DateTime> Time { get; set; }
+        public Nullable<int> PlaceId { get; set; }
+        public Nullable<int> ProjectId { get; set; }
+        public string Position { get; set; }
     
         public virtual ICollection<Achievement> Achievements { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }
+        public virtual ICollection<Meeting> Invites { get; set; }
     }
 }
