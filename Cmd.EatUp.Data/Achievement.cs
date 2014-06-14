@@ -12,12 +12,12 @@ namespace Cmd.EatUp.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class Achievements
+    public partial class Achievement
     {
         public int Id { get; set; }
         public int EmpolyeeId { get; set; }
         public string AchievementName { get; set; }
     
-        public virtual Employees Employees { get; set; }
+        public virtual Employee Employee { get; set; }
     }
 }

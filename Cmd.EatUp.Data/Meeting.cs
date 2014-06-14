@@ -12,18 +12,18 @@ namespace Cmd.EatUp.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class Meetings
+    public partial class Meeting
     {
-        public Meetings()
+        public Meeting()
         {
-            this.Employees = new HashSet<Employees>();
+            this.Employees = new HashSet<Employee>();
         }
     
         public int Id { get; set; }
         public System.DateTime Time { get; set; }
         public int PlaceId { get; set; }
     
-        public virtual Places Places { get; set; }
-        public virtual ICollection<Employees> Employees { get; set; }
+        public virtual Place Place { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

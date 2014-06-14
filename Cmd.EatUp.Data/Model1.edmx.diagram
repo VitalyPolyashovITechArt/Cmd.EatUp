@@ -4,14 +4,14 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="39e4c767d67a47b6b37a316d502101f5" Name="Diagram1">
-        <EntityTypeShape EntityType="eatupModel.Achievements" Width="1.5" PointX="3" PointY="6.375" />
-        <EntityTypeShape EntityType="eatupModel.Employees" Width="1.5" PointX="0.75" PointY="3.125" />
-        <EntityTypeShape EntityType="eatupModel.Meetings" Width="1.5" PointX="3" PointY="3.5" />
-        <EntityTypeShape EntityType="eatupModel.Places" Width="1.5" PointX="0.75" PointY="0.75" />
-        <AssociationConnector Association="eatupModel.FK_Achievements_Employees" />
-        <AssociationConnector Association="eatupModel.FK_Meetings_Meetings1" />
-        <AssociationConnector Association="eatupModel.Meetings_Employees" />
+      <Diagram DiagramId="b134412e9f4d4c8f88b2574776014f9f" Name="Diagram1">
+        <EntityTypeShape EntityType="eatupModel.Achievement" Width="1.5" PointX="3" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="eatupModel.Employee" Width="1.5" PointX="0.75" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="eatupModel.Meeting" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="eatupModel.Place" Width="1.5" PointX="0.75" PointY="7.125" IsExpanded="true" />
+        <AssociationConnector Association="eatupModel.FK_Achievements_Employees" ManuallyRouted="false" />
+        <AssociationConnector Association="eatupModel.FK_Meetings_Meetings1" ManuallyRouted="false" />
+        <AssociationConnector Association="eatupModel.Meetings_Employees" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

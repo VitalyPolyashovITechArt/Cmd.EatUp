@@ -13,10 +13,10 @@ namespace Cmd.EatUp.Data
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class eatupEntities : DbContext
+    public partial class eatupEntities1 : DbContext
     {
-        public eatupEntities()
-            : base("name=eatupEntities")
+        public eatupEntities1()
+            : base("name=eatupEntities1")
         {
         }
     
@@ -25,9 +25,9 @@ namespace Cmd.EatUp.Data
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Achievements> Achievements { get; set; }
-        public virtual DbSet<Employees> Employees { get; set; }
-        public virtual DbSet<Meetings> Meetings { get; set; }
-        public virtual DbSet<Places> Places { get; set; }
+        public virtual DbSet<Achievement> Achievements { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<Meeting> Meetings { get; set; }
+        public virtual DbSet<Place> Places { get; set; }
     }
 }

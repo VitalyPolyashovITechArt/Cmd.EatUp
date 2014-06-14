@@ -12,12 +12,12 @@ namespace Cmd.EatUp.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class Employees
+    public partial class Employee
     {
-        public Employees()
+        public Employee()
         {
-            this.Achievements = new HashSet<Achievements>();
-            this.Meetings = new HashSet<Meetings>();
+            this.Achievements = new HashSet<Achievement>();
+            this.Meetings = new HashSet<Meeting>();
         }
     
         public int Id { get; set; }
@@ -28,7 +28,7 @@ namespace Cmd.EatUp.Data
         public int DepartmentId { get; set; }
         public Nullable<System.DateTime> Time { get; set; }
     
-        public virtual ICollection<Achievements> Achievements { get; set; }
-        public virtual ICollection<Meetings> Meetings { get; set; }
+        public virtual ICollection<Achievement> Achievements { get; set; }
+        public virtual ICollection<Meeting> Meetings { get; set; }
     }
 }

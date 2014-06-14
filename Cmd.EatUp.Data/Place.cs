@@ -12,16 +12,16 @@ namespace Cmd.EatUp.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class Places
+    public partial class Place
     {
-        public Places()
+        public Place()
         {
-            this.Meetings = new HashSet<Meetings>();
+            this.Meetings = new HashSet<Meeting>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
     
-        public virtual ICollection<Meetings> Meetings { get; set; }
+        public virtual ICollection<Meeting> Meetings { get; set; }
     }
 }
