@@ -14,6 +14,12 @@ namespace Cmd.EatUp.Data
     public class DatabaseRepository
     {
         private eatupEntities1 context = new eatupEntities1();
+
+        public void SaveChanges()
+        {
+            context.SaveChanges();
+        }
+
         public void SaveEmployees(IEnumerable<Employee> employees)
         {
             context.Employees.AddRange(employees);
@@ -155,6 +161,11 @@ namespace Cmd.EatUp.Data
             context.SaveChanges();
         }
 
+        public IEnumerable<Employee> GetAllEmployees()
+        {
+            return context.Employees;
+        }
+
         public void InviteRandomEmployees(int id)
         {
             var result = GetAlonePeople(id).ToList().Shuffle(3);
@@ -165,8 +176,5 @@ namespace Cmd.EatUp.Data
         {
             return GetProfile(id).Meetings.SelectMany(x => x.Employees).Select(y => y.ProfileId.Value);
         }
-
-       
-
     }
 }

@@ -33,7 +33,8 @@ namespace Cmd.EatUp.Data
         public string Position { get; set; }
         public Nullable<int> ProfileId { get; set; }
         public string StringId { get; set; }
-    
+        public DateTime Birthday { get; set; }
+
         public virtual ICollection<Achievement> Achievements { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }
         public virtual ICollection<Meeting> Invites { get; set; }
