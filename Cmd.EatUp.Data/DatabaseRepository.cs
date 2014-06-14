@@ -62,15 +62,20 @@ namespace Cmd.EatUp.Data
             return result;
         }
 
+        private IEnumerable<Meeting> GetNearestMeetings(DateTime? time)
+        {
+            TimeSpan startTime = time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan finishTime = time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+            var allmeetings = context.Meetings.ToList();
+            //!!!!!!!!!!!
+            return allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date);
+        }
+
         private IEnumerable<Employee> GetAlonePeople(int id)
         {
             Employee currentEmployee = GetProfile(id);
 
-            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
-            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-            var allmeetings = context.Meetings.ToList();
-            //!!!!!!!!!!!
-            var todaysMeetings = allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date).Select(y => y.Id);
+           var todaysMeetings= GetNearestMeetings(currentEmployee.Time).Select(y => y.Id);
             var allemployees = context.Employees.ToList();
             var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
             result = result.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id)));
