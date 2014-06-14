@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Cmd.EatUp/bin
+/Cmd.EatUp/obj/Debug
+/packages
