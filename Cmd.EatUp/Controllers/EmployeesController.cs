@@ -1,4 +1,5 @@
 ﻿
+using System.Linq;
 using System.Web.Http;
 using Cmd.EatUp.Data;
 using Cmd.EatUp.Models;
@@ -76,7 +77,38 @@ namespace Cmd.EatUp.Controllers
         }
 
 
-        
+        private MeetingViewModel ConvertToMeetingViewMOdel(Meeting model)
+        {
+            var viewModel = new MeetingViewModel();
+            viewModel.PlaceName = model.Place.Name;
+            viewModel.Date = model.Time;
+            viewModel.Achievements = new List<EmployeeViewModel>();
+            foreach (var employee in model.Employees)
+            {
+                viewModel.Achievements.Add(ConvertToEmployeeViewMOdel(employee));
+            }
+
+            return viewModel;
+        }
+
+
+        private EmployeeViewModel ConvertToEmployeeViewMOdel(Employee model)
+        {
+            var employeeViewMOdel = new EmployeeViewModel();
+            employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
+            employeeViewMOdel.ImageUrl = model.ImagePath;
+            return employeeViewMOdel;
+        }
+
+        [Route("GetPreferrablePeople")]
+        [HttpGet]
+        public List<EmployeeViewModel> GetPreferrablePeople(int id)
+        {
+            var viewModel = new List<EmployeeViewModel>();
+            var repository = new DatabaseRepository();
+            return repository.GetPreferrablePeople(id).Select(employee => ConvertToEmployeeViewMOdel(employee)).ToList();
+
+        }
     }
 }
 
