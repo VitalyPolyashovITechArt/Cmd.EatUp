@@ -4,3 +4,7 @@
 
 /Cmd.EatUp/bin
 /Cmd.EatUp/obj
+/Cmd.EatUp.Data/bin
+/Cmd.EatUp.Data/obj
+/Cmd.EatUpTests/bin
+/Cmd.EatUpTests/obj
