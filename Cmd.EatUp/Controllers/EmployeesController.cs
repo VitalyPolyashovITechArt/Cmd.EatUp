@@ -112,6 +112,15 @@ namespace Cmd.EatUp.Controllers
             return viewModel;
         }
 
+        private PlacesViewModel ConvertToPlacesViewModel(Place model)
+        {
+            return new PlacesViewModel()
+            {
+                Id = model.Id,
+                PlaceName = model.Name
+            };
+        }
+
 
         private EmployeeViewModel ConvertToEmployeeViewMOdel(Employee model)
         {
@@ -137,6 +146,14 @@ namespace Cmd.EatUp.Controllers
         {
             var repository = new DatabaseRepository();
             return repository.GetMeetings(id).Select(ConvertToMeetingViewMOdel).ToList();
+        }
+
+        [Route("GetPlaces")]
+        [HttpGet]
+        public IEnumerable<PlacesViewModel> GetPlaces()
+        {
+            var repository = new DatabaseRepository();
+            return repository.GetAllPlaces().Select(ConvertToPlacesViewModel);
         }
 
         [Route("Join")]

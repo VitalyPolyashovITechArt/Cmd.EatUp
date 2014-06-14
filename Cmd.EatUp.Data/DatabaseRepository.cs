@@ -183,5 +183,10 @@ namespace Cmd.EatUp.Data
         {
             return GetProfile(id).Meetings.SelectMany(x => x.Employees).Select(y => y.ProfileId.Value);
         }
+
+        public IEnumerable<Place> GetAllPlaces()
+        {
+            return context.Places.ToList();
+        }
     }
 }
