@@ -1,5 +1,6 @@
 ﻿
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web.Http;
 using Cmd.EatUp.Data;
 using Cmd.EatUp.Models;
@@ -33,8 +34,8 @@ namespace Cmd.EatUp.Controllers
        //[Route("")]
         //[HttpGet]
 
-    [Route("Fill")]
-    [HttpGet]
+        [Route("Fill")]
+        [HttpGet]
         public void Fill()
         {
             var adapter = new SmgAdapter();
@@ -42,6 +43,21 @@ namespace Cmd.EatUp.Controllers
             var employees = adapter.GetAllEmployees(sessionId);
             DatabaseRepository repository = new DatabaseRepository();
             //repository.SaveEmployees(employees);
+        }
+
+        [Route("EmployeeInfoExtending")]
+        [HttpGet]
+        public void EmployeeInfoExtending()
+        {
+            var adapter = new SmgAdapter();
+            var sessionId = adapter.Authenticate("vitaly.polyashov", "qwerty6");
+            var repository = new DatabaseRepository();
+            var employees = repository.GetAllEmployees();
+            foreach (var employee in employees)
+            {
+                adapter.ExtendEmployeeInfo(sessionId, employee);
+            }
+            repository.SaveChanges();
         }
 
         [Route("Authenticate")]

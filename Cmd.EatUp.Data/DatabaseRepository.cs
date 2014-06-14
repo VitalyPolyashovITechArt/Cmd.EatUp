@@ -11,6 +11,12 @@ namespace Cmd.EatUp.Data
     public class DatabaseRepository
     {
         private eatupEntities1 context = new eatupEntities1();
+
+        public void SaveChanges()
+        {
+            context.SaveChanges();
+        }
+
         public void SaveEmployees(IEnumerable<Employee> employees)
         {
             context.Employees.AddRange(employees);
@@ -136,5 +142,9 @@ namespace Cmd.EatUp.Data
             context.SaveChanges();
         }
 
+        public IEnumerable<Employee> GetAllEmployees()
+        {
+            return context.Employees;
+        }
     }
 }
