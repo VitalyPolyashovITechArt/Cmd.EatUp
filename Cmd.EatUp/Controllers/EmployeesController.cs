@@ -32,20 +32,6 @@ namespace Cmd.EatUp.Controllers
         public string SessionId { get; set; }
     }
 
-        [Route("EmployeeInfoExtending")]
-        [HttpGet]
-        public void EmployeeInfoExtending()
-        {
-            var adapter = new SmgAdapter();
-            var sessionId = "1850509";//adapter.Authenticate("vitaly.polyashov", "qwerty6");
-            var repository = new DatabaseRepository();
-            var employees = repository.GetAllEmployees();
-            foreach (var employee in employees)
-            {
-                adapter.ExtendEmployeeInfo(sessionId, employee);
-            }
-            repository.SaveChanges();
-        }
 
         [Route("Authenticate")]
         [HttpGet]
