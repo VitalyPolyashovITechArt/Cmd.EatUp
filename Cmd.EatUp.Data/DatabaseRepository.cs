@@ -79,9 +79,9 @@ namespace Cmd.EatUp.Data
             TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
             TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
            var todaysMeetings= GetNearestMeetings().Select(y => y.Id);
-            var allemployees = context.Employees.ToList().Where(x => x.ProfileId != id).ToList();
-            var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
-            result = result.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id)));
+            var allemployees = context.Employees.Where(x => x.ProfileId != id);
+            var result = allemployees.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id))).ToList();
+            result = result.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime).ToList();
             return result;
         }
 
