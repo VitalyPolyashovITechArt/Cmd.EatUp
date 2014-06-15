@@ -55,8 +55,8 @@ namespace Cmd.EatUp.Data
 
             TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
             TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-            var result = context.Meetings.ToList()
-                .Where(x => x.Time.TimeOfDay >= startTime && x.Time.TimeOfDay <= finishTime).Where(x => !x.Employees.Contains(currentEmployee))
+            var result = context.Meetings.Where(z => z.PlaceId == currentEmployee.PlaceId).ToList()
+                .Where(x => x.Time.TimeOfDay >= startTime && x.Time.TimeOfDay <= finishTime).Where(f => !f.Employees.Contains(currentEmployee))
                 .OrderByDescending(y =>
                     GetEmployeeWeights(currentEmployee, y.Employees, knownPeople)
                         
@@ -79,10 +79,7 @@ namespace Cmd.EatUp.Data
             TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
             TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
            var todaysMeetings= GetNearestMeetings().Select(y => y.Id);
-            var allemployees = context.Employees.Except(
-            new List<Employee>() {
-                currentEmployee
-            }).ToList();
+            var allemployees = context.Employees.ToList().Where(x => x.ProfileId != id).ToList();
             var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
             result = result.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id)));
             return result;

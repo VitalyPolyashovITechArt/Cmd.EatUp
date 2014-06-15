@@ -133,6 +133,16 @@ namespace Cmd.EatUp.Controllers
             return employeeViewMOdel;
         }
 
+        private SortableEmployeeViewModel ConvertToSortableEmployeeViewMOdel(Employee model, int index)
+        {
+            var employeeViewMOdel = new SortableEmployeeViewModel();
+            employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
+            employeeViewMOdel.ImageUrl = "http://10.168.0.255/content/" + model.ProfileId.Value + ".jpg";
+            employeeViewMOdel.Id = model.ProfileId.Value;
+            employeeViewMOdel.Index = index;
+            return employeeViewMOdel;
+        }
+
         [Route("GetInvites")]
         [HttpGet]
         public List<MeetingViewModel> GetInvites(int id)
@@ -141,12 +151,13 @@ namespace Cmd.EatUp.Controllers
             return repository.GetInvitations(id).Select(ConvertToMeetingViewMOdel).ToList();
         }
 
-        [Route("GetPreferrablePeople")]
+        [Route("GetPreferablePeople")]
         [HttpGet]
-        public List<EmployeeViewModel> GetPreferrablePeople(int id)
+        public List<SortableEmployeeViewModel> GetPreferablePeople(int id)
         {
             var repository = new DatabaseRepository();
-            return repository.GetPreferrablePeople(id).Select(ConvertToEmployeeViewMOdel).ToList();
+            var result=  repository.GetPreferrablePeople(id).Select((x, i) => ConvertToSortableEmployeeViewMOdel(x, i)).ToList();
+            return result;
         }
 
 
