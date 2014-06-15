@@ -52,7 +52,7 @@ namespace Cmd.EatUp.Controllers
         public void EmployeeInfoExtending()
         {
             var adapter = new SmgAdapter();
-            var sessionId = adapter.Authenticate("vitaly.polyashov", "qwerty6");
+            var sessionId = "1850509";//adapter.Authenticate("vitaly.polyashov", "qwerty6");
             var repository = new DatabaseRepository();
             var employees = repository.GetAllEmployees();
             foreach (var employee in employees)
@@ -87,6 +87,7 @@ namespace Cmd.EatUp.Controllers
             viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
             viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
             viewModel.ExactTime = result.Time.Value;
+            viewModel.PlaceName = result.Place.Name;
             viewModel.ImagePath = "http://10.168.0.255/content/" + result.ProfileId.Value + ".jpg"; ;
             viewModel.Achievements = repository.GetAchievements(id).ToList();
             viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
@@ -132,6 +133,14 @@ namespace Cmd.EatUp.Controllers
             return employeeViewMOdel;
         }
 
+        [Route("GetInvites")]
+        [HttpGet]
+        public List<MeetingViewModel> GetInvites(int id)
+        {
+            var repository = new DatabaseRepository();
+            return repository.GetInvitations(id).Select(ConvertToMeetingViewMOdel).ToList();
+        }
+
         [Route("GetPreferrablePeople")]
         [HttpGet]
         public List<EmployeeViewModel> GetPreferrablePeople(int id)
@@ -159,34 +168,40 @@ namespace Cmd.EatUp.Controllers
 
         [Route("Join")]
         [HttpGet]
-        public void Join(int id, int meetingId)
+        public object Join(int id, int meetingId)
         {
             var repository = new DatabaseRepository();
             repository.JoinMeeting(id, meetingId);
+            return new object();
         }
 
         [Route("Invite")]
         [HttpGet]
-        public void Invite(int id, int targetId)
+        public object Invite(int id, int targetId)
         {
             var repository = new DatabaseRepository();
             repository.InviteToMeeting(id, targetId);
+            return new object();
         }
 
         [Route("InviteRandomEmployees")]
         [HttpGet]
-        public void Invite(int id)
+        public object Invite(int id)
         {
             var repository = new DatabaseRepository();
             repository.InviteRandomEmployees(id);
+            return new object();
         }
 
         [Route("ChangePlaceAndTime")]
-        public void ChangePlaceAndTime(int id, DateTime? time, string placeName)
+        [HttpGet]
+        public object ChangePlaceAndTime(int profileId, DateTime? time, string placeName)
         {
             var repository = new DatabaseRepository();
-            repository.ChangePlaceAndTime(id, time, placeName);
+            repository.ChangePlaceAndTime(profileId, time, placeName);
+            return new object();
         }
+
     }
 }
 

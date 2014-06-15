@@ -38,5 +38,6 @@ namespace Cmd.EatUp.Data
         public virtual ICollection<Achievement> Achievements { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }
         public virtual ICollection<Meeting> Invites { get; set; }
+        public virtual Place Place { get; set; }
     }
 }

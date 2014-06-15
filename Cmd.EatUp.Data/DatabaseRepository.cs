@@ -38,6 +38,7 @@ namespace Cmd.EatUp.Data
 
         public Meeting GetAcceptedMeeting(int id)
         {
+            
             return GetProfile(id).Meetings.FirstOrDefault(x => x.Time.Date == DateTime.Now.Date);
         }
         public List<Meeting> GetInvitations(int id)
@@ -65,11 +66,11 @@ namespace Cmd.EatUp.Data
             return result;
         }
 
-        private IEnumerable<Meeting> GetNearestMeetings(DateTime? time)
+        private IEnumerable<Meeting> GetNearestMeetings()
         {          
             var allmeetings = context.Meetings.ToList();
             //!!!!!!!!!!!
-            return allmeetings.Where(x => x.Time.Date == DateTime.Now.AddDays(1).Date).Where(x => x.Time > DateTime.Now);
+            return allmeetings.Where(x => x.Time.Date == DateTime.Now.Date).Where(x => x.Time > DateTime.Now);
         }
 
         private IEnumerable<Employee> GetAlonePeople(int id)
@@ -77,8 +78,11 @@ namespace Cmd.EatUp.Data
             Employee currentEmployee = GetProfile(id);
             TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
             TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-           var todaysMeetings= GetNearestMeetings(currentEmployee.Time).Select(y => y.Id);
-            var allemployees = context.Employees.ToList();
+           var todaysMeetings= GetNearestMeetings().Select(y => y.Id);
+            var allemployees = context.Employees.Except(
+            new List<Employee>() {
+                currentEmployee
+            }).ToList();
             var result = allemployees.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime);
             result = result.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id)));
             return result;
@@ -112,13 +116,16 @@ namespace Cmd.EatUp.Data
             {
                 sum += 4;
             }
-            if (targetEmployee.ProjectId == employee.ProjectId)
+            //if (targetEmployee.ProjectId == employee.ProjectId)
+            //{
+            //    sum += 4;
+            //}
+            if (targetEmployee.Birthday.HasValue && employee.Birthday.HasValue)
             {
-                sum += 4;
-            }
-            if ( Math.Abs(targetEmployee.Birthday.Value - employee.Birthday.Value) <= 2)
-            {
-                sum += 3;
+                if (Math.Abs(targetEmployee.Birthday.Value - employee.Birthday.Value) <= 1)
+                {
+                    sum += 3;
+                }
             }
             if (targetEmployee.DepartmentId == employee.DepartmentId)
             {
@@ -126,7 +133,7 @@ namespace Cmd.EatUp.Data
             }
             if (targetEmployee.Position == employee.Position)
             {
-                sum += 1;
+                sum += 2;
             }
 
             return sum;
@@ -213,6 +220,27 @@ namespace Cmd.EatUp.Data
                 list.Add("EarliestTeam");
             }
             return list;
+        }
+
+        public IEnumerable<Place> GetAllPlaces()
+        {
+            return context.Places.ToList();
+        }
+
+        public void ChangePlaceAndTime(int id, DateTime? time, string placeName)
+        {
+            var profile = GetProfile(id);
+
+            if (!string.IsNullOrEmpty(placeName))
+            {
+                profile.PlaceId = context.Places.First(place => place.Name == placeName).Id;
+            }
+                        if (time.HasValue)
+            {
+                profile.Time = time;
+            }
+
+            context.SaveChanges();
         }
     }
 }

@@ -65,22 +65,29 @@ namespace Cmd.EatUpTests
 
         public void ExtendEmployeeInfo(string sessionId, Employee employee)
         {
-            HttpWebRequest request = CreateGetEmployeeDetailsRequest(sessionId, employee.ProfileId.Value);
-            using (WebResponse response = request.GetResponse())
+            string soapResult = null;
+            while (string.IsNullOrEmpty(soapResult) || soapResult.Contains("imeout"))
             {
-                using (var streamReader = new StreamReader(response.GetResponseStream()))
+                HttpWebRequest request = CreateGetEmployeeDetailsRequest(sessionId, employee.ProfileId.Value);
+                using (WebResponse response = request.GetResponse())
                 {
-                    string soapResult = streamReader.ReadToEnd();
-                    ExtendEmployee(employee, soapResult);
+                    using (var streamReader = new StreamReader(response.GetResponseStream()))
+                    {
+                        soapResult = streamReader.ReadToEnd();
+
+                    }
                 }
             }
+            
+            ExtendEmployee(employee, soapResult);
         }
 
         private void ExtendEmployee(Employee employee, string soapResult)
         {
             dynamic resultObj = JsonConvert.DeserializeObject(soapResult);
-            employee.Birthday = EpochToDateTime(resultObj.Profile.Birthday).Date;
-            employee.Position = resultObj.Rank;
+            DateTime dt = DateTime.Parse(resultObj.Profile.Birthday.ToString());
+            employee.Birthday = dt.Year;
+            employee.Position = resultObj.Profile.Rank;
         }
 
         private DateTime EpochToDateTime(string epochDate)

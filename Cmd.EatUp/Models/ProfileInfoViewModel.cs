@@ -11,7 +11,7 @@ namespace Cmd.EatUp.Models
     {
         public string FullName { get; set; }
         public DateTime ExactTime { get; set; }
-
+        public string PlaceName { get; set; }
         public string ImagePath { get; set; }
 
         public DateTime StartPreferredTime { get; set; }

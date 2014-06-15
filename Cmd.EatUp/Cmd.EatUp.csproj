@@ -175,6 +175,7 @@
     </Compile>
     <Compile Include="Models\EmployeeViewModel.cs" />
     <Compile Include="Models\MeetingViewModel.cs" />
+    <Compile Include="Models\PlacesViewModel.cs" />
     <Compile Include="Models\ProfileInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

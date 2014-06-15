@@ -13,6 +13,7 @@
         <AssociationConnector Association="eatupModel.FK_Meetings_Meetings1" />
         <AssociationConnector Association="eatupModel.Invites" />
         <AssociationConnector Association="eatupModel.Meetings_Employees" />
+        <AssociationConnector Association="eatupModel.FK_Employees_Places" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
