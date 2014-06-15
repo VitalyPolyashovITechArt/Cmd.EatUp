@@ -184,6 +184,19 @@ namespace Cmd.EatUp.Controllers
             return new object();
         }
 
+        [Route("BatchInvite")]
+        [HttpGet]
+        public object Invite(int id, string targetIds)
+        {
+            var repository = new DatabaseRepository();
+            var targetIdsList = targetIds.Split(',');
+            foreach (var targetId in targetIdsList)
+            {
+                repository.InviteToMeeting(id, Int32.Parse(targetId));
+            }
+            return new object();
+        }
+
         [Route("InviteRandomEmployees")]
         [HttpGet]
         public object Invite(int id)
