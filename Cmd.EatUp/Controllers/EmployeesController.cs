@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Cmd.EatUp.Controllers
 {
     [RoutePrefix("Employees")]
-    public class EmployeesController : ApiController
+    public class GeneralApiController : ApiController
     {
     public class ResponseObject
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
@@ -51,15 +52,17 @@ namespace Cmd.EatUp.Data
             Employee currentEmployee = GetProfile(id);
 
             var knownPeople = GetPeopleYouEverMet(id).ToList();
+            //EntityFunctions.CreateDateTime()
 
-
-            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
-            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-            var result = context.Meetings.Where(z => z.PlaceId == currentEmployee.PlaceId).ToList()
-                .Where(x => x.Time.TimeOfDay >= startTime && x.Time.TimeOfDay <= finishTime).Where(f => !f.Employees.Contains(currentEmployee))
+            TimeSpan time = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+            //TimeSpan? startTime = EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds);
+            time = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
+            //TimeSpan? finishTime = EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds);
+            var result = context.Meetings.Where(z => z.PlaceId == currentEmployee.PlaceId)
+                .Where(x => x.Time.TimeOfDay >= EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds) && x.Time.TimeOfDay <= EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds))
+                .Where(f => !f.Employees.Contains(currentEmployee))
                 .OrderByDescending(y =>
                     GetEmployeeWeights(currentEmployee, y.Employees, knownPeople)
-                        
                 ).Take(10)
                 .ToList();
 
