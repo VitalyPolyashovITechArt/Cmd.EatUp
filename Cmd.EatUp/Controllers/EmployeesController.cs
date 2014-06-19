@@ -47,6 +47,25 @@ namespace Cmd.EatUp.Controllers
 
         }
 
+		[Route("PostDeviceId")]
+		[HttpGet]
+		public object PostDevice(int id, string deviceId)
+		{
+			ProfileInfoViewModel viewModel = new ProfileInfoViewModel();
+			DatabaseRepository repository = new DatabaseRepository();
+			var result = repository.GetProfile(id);
+			viewModel.FullName = String.Format("{0} {1}", result.FirstName, result.LastName);
+			viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
+			viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
+			viewModel.ExactTime = result.Time.Value;
+			viewModel.PlaceName = result.Place.Name;
+			viewModel.ImagePath = "http://192.168.13.49/content/" + result.ProfileId.Value + ".jpg"; ;
+			viewModel.Achievements = repository.GetAchievements(id).ToList();
+			viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
+
+			return viewModel;
+		}
+
         [Route("GetProfileInfo")]
         [HttpGet]
         public ProfileInfoViewModel GetProfileInfo(int id)
@@ -59,7 +78,7 @@ namespace Cmd.EatUp.Controllers
             viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
             viewModel.ExactTime = result.Time.Value;
             viewModel.PlaceName = result.Place.Name;
-            viewModel.ImagePath = "http://10.168.0.255/content/" + result.ProfileId.Value + ".jpg"; ;
+            viewModel.ImagePath = "http://192.168.13.49/content/" + result.ProfileId.Value + ".jpg"; ;
             viewModel.Achievements = repository.GetAchievements(id).ToList();
             viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
 
@@ -99,7 +118,7 @@ namespace Cmd.EatUp.Controllers
         {
             var employeeViewMOdel = new EmployeeViewModel();
             employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
-            employeeViewMOdel.ImageUrl = "http://10.168.0.255/content/" + model.ProfileId.Value + ".jpg";
+			employeeViewMOdel.ImageUrl = "http://192.168.13.49/content/" + model.ProfileId.Value + ".jpg";
             employeeViewMOdel.Id = model.ProfileId.Value;
             return employeeViewMOdel;
         }
@@ -108,7 +127,7 @@ namespace Cmd.EatUp.Controllers
         {
             var employeeViewMOdel = new SortableEmployeeViewModel();
             employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
-            employeeViewMOdel.ImageUrl = "http://10.168.0.255/content/" + model.ProfileId.Value + ".jpg";
+			employeeViewMOdel.ImageUrl = "http://192.168.13.49/content/" + model.ProfileId.Value + ".jpg";
             employeeViewMOdel.Id = model.ProfileId.Value;
             employeeViewMOdel.Index = index;
             return employeeViewMOdel;
