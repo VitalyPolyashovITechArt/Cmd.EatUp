@@ -23,13 +23,15 @@
           <Property Name="ImagePath" Type="varchar(max)" />
           <Property Name="Room" Type="varchar(max)" />
           <Property Name="DepartmentId" Type="int" Nullable="false" />
-          <Property Name="Time" Type="datetime" />
+          <Property Name="Time" Type="time" Precision="7" />
           <Property Name="PlaceId" Type="int" />
           <Property Name="ProjectId" Type="int" />
           <Property Name="Position" Type="varchar(max)" />
           <Property Name="ProfileId" Type="int" />
           <Property Name="StringId" Type="varchar(max)" />
           <Property Name="Birthday" Type="int" />
+          <Property Name="DeviceId" Type="varchar(max)" />
+          <Property Name="IsActive" Type="bit" />
         </EntityType>
         <EntityType Name="Invites">
           <Key>
@@ -231,7 +233,7 @@
           <Property Name="ImagePath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Room" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DepartmentId" Type="Int32" Nullable="false" />
-          <Property Name="Time" Type="DateTime" Precision="3" />
+          <Property Name="Time" Type="Time" Precision="7" />
           <Property Name="PlaceId" Type="Int32" />
           <Property Name="ProjectId" Type="Int32" />
           <Property Name="Position" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -242,6 +244,8 @@
           <Property Name="StringId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Birthday" Type="Int32" />
           <NavigationProperty Name="Place" Relationship="eatupModel.FK_Employees_Places" FromRole="Employee" ToRole="Place" />
+          <Property Name="DeviceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
         </EntityType>
         <EntityType Name="Meeting">
           <Key>
@@ -325,13 +329,15 @@
           <EntitySetMapping Name="Employees">
             <EntityTypeMapping TypeName="eatupModel.Employee">
               <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="Birthday" ColumnName="Birthday" />
                 <ScalarProperty Name="StringId" ColumnName="StringId" />
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="Position" ColumnName="Position" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="PlaceId" ColumnName="PlaceId" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
                 <ScalarProperty Name="Room" ColumnName="Room" />
                 <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />

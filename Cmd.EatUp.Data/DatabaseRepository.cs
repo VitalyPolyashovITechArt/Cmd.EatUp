@@ -52,15 +52,13 @@ namespace Cmd.EatUp.Data
             Employee currentEmployee = GetProfile(id);
 
             var knownPeople = GetPeopleYouEverMet(id).ToList();
-            //EntityFunctions.CreateDateTime()
 
-            TimeSpan time = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-            //TimeSpan? startTime = EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds);
-            time = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
-            //TimeSpan? finishTime = EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds);
+            TimeSpan time = currentEmployee.Time.Value.Add(TimeSpan.FromMinutes(30));
+            TimeSpan? startTime = time.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan? finishTime = time.Add(TimeSpan.FromMinutes(30));
             var result = context.Meetings.Where(z => z.PlaceId == currentEmployee.PlaceId)
-                .Where(x => x.Time.TimeOfDay >= EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds) && x.Time.TimeOfDay <= EntityFunctions.CreateTime(time.Hours, time.Minutes, time.Seconds))
-                .Where(f => !f.Employees.Contains(currentEmployee))
+                .Where(x => EntityFunctions.CreateTime(x.Time.Hour, x.Time.Minute, 0) >= startTime && EntityFunctions.CreateTime(x.Time.Hour, x.Time.Minute, 0) <= finishTime)
+                .Where(f => f.Employees.All(x => x.ProfileId != currentEmployee.ProfileId)).ToList()
                 .OrderByDescending(y =>
                     GetEmployeeWeights(currentEmployee, y.Employees, knownPeople)
                 ).Take(10)
@@ -72,19 +70,18 @@ namespace Cmd.EatUp.Data
         private IEnumerable<Meeting> GetNearestMeetings()
         {          
             var allmeetings = context.Meetings.ToList();
-            //!!!!!!!!!!!
             return allmeetings.Where(x => x.Time.Date == DateTime.Now.Date).Where(x => x.Time > DateTime.Now);
         }
 
         private IEnumerable<Employee> GetAlonePeople(int id)
         {
             Employee currentEmployee = GetProfile(id);
-            TimeSpan startTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(-30));
-            TimeSpan finishTime = currentEmployee.Time.Value.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-           var todaysMeetings= GetNearestMeetings().Select(y => y.Id);
+            TimeSpan startTime = currentEmployee.Time.Value.Add(TimeSpan.FromMinutes(-30));
+            TimeSpan finishTime = currentEmployee.Time.Value.Add(TimeSpan.FromMinutes(30));
+            var todaysMeetings= GetNearestMeetings().Select(y => y.Id);
             var allemployees = context.Employees.Where(x => x.ProfileId != id);
             var result = allemployees.Where(y => !y.Meetings.Any(f => todaysMeetings.Contains(f.Id))).ToList();
-            result = result.Where(x => x.Time.Value.TimeOfDay >= startTime && x.Time.Value.TimeOfDay <= finishTime).ToList();
+            result = result.Where(x => x.Time.Value >= startTime && x.Time.Value <= finishTime).ToList();
             return result;
         }
 
@@ -143,7 +140,7 @@ namespace Cmd.EatUp.Data
         {
             var employee = GetProfile(id);
             var meeting = context.Meetings.Single(x => x.Id == meetingId);
-            employee.Time = meeting.Time;
+            employee.Time = meeting.Time.TimeOfDay;
             meeting.Employees.Add(employee);
             if (employee.Invites.Contains(meeting))
             {
@@ -164,7 +161,7 @@ namespace Cmd.EatUp.Data
                     meeting.Employees = new Collection<Employee>();
                     meeting.Employees.Add(employee);
                     meeting.PlaceId = employee.PlaceId.Value;
-                    meeting.Time = employee.Time.Value;
+                    meeting.Time = DateTime.Today.Add(employee.Time.Value);
                     meeting.InvitedEmployees = new List<Employee>();              
                     context.Meetings.Add(meeting);
                 }
@@ -173,11 +170,6 @@ namespace Cmd.EatUp.Data
             
             
             context.SaveChanges();
-        }
-
-        public IEnumerable<Employee> GetAllEmployees()
-        {
-            return context.Employees;
         }
 
         public void InviteRandomEmployees(int id)
@@ -227,7 +219,7 @@ namespace Cmd.EatUp.Data
             return context.Places.ToList();
         }
 
-        public void ChangePlaceAndTime(int id, DateTime? time, string placeName)
+        public void ChangePlaceAndTime(int id, TimeSpan? time, string placeName)
         {
             var profile = GetProfile(id);
 
@@ -235,11 +227,17 @@ namespace Cmd.EatUp.Data
             {
                 profile.PlaceId = context.Places.First(place => place.Name == placeName).Id;
             }
-                        if (time.HasValue)
+            if (time.HasValue)
             {
                 profile.Time = time;
             }
 
+            context.SaveChanges();
+        }
+
+        public void SetDeviceId(int id, string deviceId)
+        {
+            GetProfile(id).DeviceId = deviceId;
             context.SaveChanges();
         }
     }

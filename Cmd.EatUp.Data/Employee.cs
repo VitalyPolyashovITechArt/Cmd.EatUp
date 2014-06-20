@@ -27,13 +27,15 @@ namespace Cmd.EatUp.Data
         public string ImagePath { get; set; }
         public string Room { get; set; }
         public int DepartmentId { get; set; }
-        public Nullable<System.DateTime> Time { get; set; }
+        public Nullable<System.TimeSpan> Time { get; set; }
         public Nullable<int> PlaceId { get; set; }
         public Nullable<int> ProjectId { get; set; }
         public string Position { get; set; }
         public Nullable<int> ProfileId { get; set; }
         public string StringId { get; set; }
         public Nullable<int> Birthday { get; set; }
+        public string DeviceId { get; set; }
+        public Nullable<bool> IsActive { get; set; }
     
         public virtual ICollection<Achievement> Achievements { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }

@@ -55,8 +55,8 @@ namespace Cmd.EatUp.Controllers
 			DatabaseRepository repository = new DatabaseRepository();
 			var result = repository.GetProfile(id);
 			viewModel.FullName = String.Format("{0} {1}", result.FirstName, result.LastName);
-			viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
-			viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
+            viewModel.StartPreferredTime = result.Time.Value.Add(TimeSpan.FromMinutes(-30));
+            viewModel.FinishPreferredTime = result.Time.Value.Add(TimeSpan.FromMinutes(30));
 			viewModel.ExactTime = result.Time.Value;
 			viewModel.PlaceName = result.Place.Name;
 			viewModel.ImagePath = "http://192.168.13.49/content/" + result.ProfileId.Value + ".jpg"; ;
@@ -74,8 +74,8 @@ namespace Cmd.EatUp.Controllers
            DatabaseRepository repository = new DatabaseRepository();
             var result = repository.GetProfile(id);
             viewModel.FullName = String.Format("{0} {1}", result.FirstName, result.LastName);
-            viewModel.StartPreferredTime = result.Time.Value.AddMinutes(-30);
-            viewModel.FinishPreferredTime = result.Time.Value.AddMinutes(30);
+            viewModel.StartPreferredTime = result.Time.Value.Add(TimeSpan.FromMinutes(-30));
+            viewModel.FinishPreferredTime = result.Time.Value.Add(TimeSpan.FromMinutes(30));
             viewModel.ExactTime = result.Time.Value;
             viewModel.PlaceName = result.Place.Name;
             viewModel.ImagePath = "http://192.168.13.49/content/" + result.ProfileId.Value + ".jpg"; ;
@@ -209,7 +209,7 @@ namespace Cmd.EatUp.Controllers
 
         [Route("ChangePlaceAndTime")]
         [HttpGet]
-        public object ChangePlaceAndTime(int profileId, DateTime? time, string placeName)
+        public object ChangePlaceAndTime(int profileId, TimeSpan? time, string placeName)
         {
             var repository = new DatabaseRepository();
             repository.ChangePlaceAndTime(profileId, time, placeName);
