@@ -36,6 +36,7 @@ namespace Cmd.EatUp.Data
         public Nullable<int> Birthday { get; set; }
         public string DeviceId { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public string Email { get; set; }
     
         public virtual ICollection<Achievement> Achievements { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }

@@ -30,6 +30,7 @@
           <Property Name="ProfileId" Type="int" />
           <Property Name="StringId" Type="varchar(max)" />
           <Property Name="Birthday" Type="int" />
+          <Property Name="Email" Type="varchar(max)" />
           <Property Name="DeviceId" Type="varchar(max)" />
           <Property Name="IsActive" Type="bit" />
         </EntityType>
@@ -246,6 +247,7 @@
           <NavigationProperty Name="Place" Relationship="eatupModel.FK_Employees_Places" FromRole="Employee" ToRole="Place" />
           <Property Name="DeviceId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Meeting">
           <Key>
@@ -329,6 +331,7 @@
           <EntitySetMapping Name="Employees">
             <EntityTypeMapping TypeName="eatupModel.Employee">
               <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
