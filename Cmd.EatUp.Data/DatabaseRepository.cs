@@ -42,6 +42,12 @@ namespace Cmd.EatUp.Data
             
             return GetProfile(id).Meetings.FirstOrDefault(x => x.Time.Date == DateTime.Now.Date);
         }
+
+		public Meeting GetMeeting(int id)
+		{
+
+			return context.Meetings.SingleOrDefault(x => x.Id == id);
+		}
         public List<Meeting> GetInvitations(int id)
         {
             return GetProfile(id).Invites.Where(x => x.Time.Date == DateTime.Now.Date).ToList();
@@ -57,11 +63,13 @@ namespace Cmd.EatUp.Data
             TimeSpan? startTime = time.Add(TimeSpan.FromMinutes(-30));
             TimeSpan? finishTime = time.Add(TimeSpan.FromMinutes(30));
             var result = context.Meetings.Where(z => z.PlaceId == currentEmployee.PlaceId)
+				.Where(z => z.Time >= DateTime.Now)
+				.Where(c => c.Employees.Any())
                 .Where(x => EntityFunctions.CreateTime(x.Time.Hour, x.Time.Minute, 0) >= startTime && EntityFunctions.CreateTime(x.Time.Hour, x.Time.Minute, 0) <= finishTime)
-                .Where(f => f.Employees.All(x => x.ProfileId != currentEmployee.ProfileId)).ToList()
+                .Where(f => f.Employees.All(m => m.ProfileId != currentEmployee.ProfileId)).ToList()
                 .OrderByDescending(y =>
                     GetEmployeeWeights(currentEmployee, y.Employees, knownPeople)
-                ).Take(10)
+                ).Take(30)
                 .ToList();
 
             return result;
@@ -91,7 +99,7 @@ namespace Cmd.EatUp.Data
             var result = GetAlonePeople(id);
             var knownPeople = GetPeopleYouEverMet(id).ToList();
             result = result.OrderByDescending(x => GetEmployeeWeight(currentEmployee, x, knownPeople));
-            return result.Take(10).ToList();
+            return result.Take(50).ToList();
         }
 
         private int GetEmployeeWeights(Employee employee, IEnumerable<Employee> employees, IEnumerable<int> knownPeople )
@@ -149,7 +157,23 @@ namespace Cmd.EatUp.Data
             context.SaveChanges();
         }
 
-        public void InviteToMeeting(int id, int targetEmployeeId)
+		public void LeaveMeeting(int id, int meetingId)
+		{
+			var employee = GetProfile(id);
+			var meeting = context.Meetings.SingleOrDefault(x => x.Id == meetingId);
+			if (meeting != null)
+			{
+				employee.Time = meeting.Time.TimeOfDay;
+				meeting.Employees.Remove(employee);
+				if (employee.Invites.Contains(meeting))
+				{
+					employee.Invites.Remove(meeting);
+				}
+				context.SaveChanges();
+			}
+		}
+
+        public Meeting InviteToMeeting(int id, int targetEmployeeId)
         {
             var employee = GetProfile(id);
             var meeting = GetAcceptedMeeting(id);
@@ -170,6 +194,8 @@ namespace Cmd.EatUp.Data
             
             
             context.SaveChanges();
+
+	        return meeting;
         }
 
         public void InviteRandomEmployees(int id)

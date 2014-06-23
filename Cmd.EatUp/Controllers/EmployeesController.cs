@@ -8,6 +8,7 @@ using Cmd.EatUp.Models;
 using Cmd.EatUpTests;
 using System;
 using System.Collections.Generic;
+using Microsoft.Ajax.Utilities;
 
 
 namespace Cmd.EatUp.Controllers
@@ -59,7 +60,7 @@ namespace Cmd.EatUp.Controllers
             viewModel.FinishPreferredTime = result.Time.Value.Add(TimeSpan.FromMinutes(30));
 			viewModel.ExactTime = result.Time.Value;
 			viewModel.PlaceName = result.Place.Name;
-			viewModel.ImagePath = "http://192.168.13.49/content/" + result.ProfileId.Value + ".jpg"; ;
+			viewModel.ImagePath = "http://eatuptest.azurewebsites.net/content/" + result.ProfileId.Value + ".jpg"; ;
 			viewModel.Achievements = repository.GetAchievements(id).ToList();
 			viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
 
@@ -78,7 +79,7 @@ namespace Cmd.EatUp.Controllers
             viewModel.FinishPreferredTime = result.Time.Value.Add(TimeSpan.FromMinutes(30));
             viewModel.ExactTime = result.Time.Value;
             viewModel.PlaceName = result.Place.Name;
-            viewModel.ImagePath = "http://192.168.13.49/content/" + result.ProfileId.Value + ".jpg"; ;
+			viewModel.ImagePath = "http://eatuptest.azurewebsites.net/content/" + result.ProfileId.Value + ".jpg"; ;
             viewModel.Achievements = repository.GetAchievements(id).ToList();
             viewModel.CurrentMeeting = ConvertToMeetingViewMOdel(repository.GetAcceptedMeeting(id));
 
@@ -118,7 +119,7 @@ namespace Cmd.EatUp.Controllers
         {
             var employeeViewMOdel = new EmployeeViewModel();
             employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
-			employeeViewMOdel.ImageUrl = "http://192.168.13.49/content/" + model.ProfileId.Value + ".jpg";
+			employeeViewMOdel.ImageUrl = "http://eatuptest.azurewebsites.net/content/" + model.ProfileId.Value + ".jpg";
             employeeViewMOdel.Id = model.ProfileId.Value;
             return employeeViewMOdel;
         }
@@ -127,7 +128,7 @@ namespace Cmd.EatUp.Controllers
         {
             var employeeViewMOdel = new SortableEmployeeViewModel();
             employeeViewMOdel.FullName = String.Format("{0} {1}", model.FirstName, model.LastName);
-			employeeViewMOdel.ImageUrl = "http://192.168.13.49/content/" + model.ProfileId.Value + ".jpg";
+			employeeViewMOdel.ImageUrl = "http://eatuptest.azurewebsites.net/content/" + model.ProfileId.Value + ".jpg";
             employeeViewMOdel.Id = model.ProfileId.Value;
             employeeViewMOdel.Index = index;
             return employeeViewMOdel;
@@ -181,7 +182,12 @@ namespace Cmd.EatUp.Controllers
         public object Invite(int id, int targetId)
         {
             var repository = new DatabaseRepository();
-            repository.InviteToMeeting(id, targetId);
+            var meeting = repository.InviteToMeeting(id, targetId);
+
+			//var profile = repository.GetProfile(targetId);
+			//var newMeeting = repository.GetMeeting(meeting.Id);
+			//Notifier.Notify(profile.DeviceId, ConvertToMeetingViewMOdel(newMeeting));
+
             return new object();
         }
 
@@ -193,7 +199,11 @@ namespace Cmd.EatUp.Controllers
             var targetIdsList = targetIds.Split(',');
             foreach (var targetId in targetIdsList)
             {
-                repository.InviteToMeeting(id, Int32.Parse(targetId));
+                var meeting = repository.InviteToMeeting(id, Int32.Parse(targetId));
+
+				//var profile = repository.GetProfile(Int32.Parse(targetId));
+	            // var newMeeting = repository.GetMeeting(meeting.Id);
+				//Notifier.Notify(profile.DeviceId, ConvertToMeetingViewMOdel(newMeeting));
             }
             return new object();
         }
@@ -215,6 +225,15 @@ namespace Cmd.EatUp.Controllers
             repository.ChangePlaceAndTime(profileId, time, placeName);
             return new object();
         }
+
+		[Route("Leave")]
+		[HttpGet]
+		public object Leave(int id, int meetingId)
+		{
+			var repository = new DatabaseRepository();
+			repository.LeaveMeeting(id, meetingId);
+			return new object();
+		}
 
     }
 }

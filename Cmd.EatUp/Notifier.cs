@@ -1,4 +1,6 @@
-﻿using System.Web.Helpers;
+﻿using System;
+using System.Web;
+using System.Web.Helpers;
 using Cmd.EatUp.Models;
 using PushSharp;
 using System.IO;
@@ -13,9 +15,8 @@ namespace Cmd.EatUp.Data
         static Notifier()
         {
             broker = new PushBroker();
-            var appleCert = File.ReadAllBytes("ApnsSandboxCert.p12");
-            broker.RegisterAppleService(new ApplePushChannelSettings(appleCert, "pwd"));
-
+			var appleCert = File.ReadAllBytes(Path.Combine(HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data"), "EatUpKey.p12"));
+            broker.RegisterAppleService(new ApplePushChannelSettings(false, appleCert, "macmac"));
         }
 
         public static void Notify(string token, MeetingViewModel meeting)
@@ -23,7 +24,7 @@ namespace Cmd.EatUp.Data
              broker.QueueNotification(new AppleNotification()
                 .ForDeviceToken(token)
                 .WithAlert(Json.Encode(meeting))
-                .WithBadge(1)
+                .WithBadge(7)
                 .WithSound("sound.caf"));
         }
 
